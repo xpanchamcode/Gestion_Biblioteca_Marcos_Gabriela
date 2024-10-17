@@ -40,10 +40,9 @@ public class JDBC {
 
     //La contraseña dependerá del SO (en los de sobremesa linux es "a", en los Windows suele ser "")
     private void setPasswd(){
-        if(OS.contains("Windows")){
+        if(OS.contains("Windows"))
             PASSWD = "";
-        } else if (OS.contains("Linux")| OS.contains("Unix")) {
+        else if (OS.contains("Linux")| OS.contains("Unix"))
             PASSWD = "a";
-        }
     }
 }
