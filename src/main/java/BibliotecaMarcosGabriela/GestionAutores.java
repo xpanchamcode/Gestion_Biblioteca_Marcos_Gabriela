@@ -29,7 +29,7 @@ public class GestionAutores {
     }
 
     //  Método que devuelve un objeto existente en la base de datos según su id (si no existe devuelve null)
-    public static DTOAutor getUsuarioIfExists(Integer id) {
+    public static DTOAutor getAutorIfExists(Integer id) {
         boolean existe = false;
         DTOAutor autorDevuelto = null;
         //Busco en la lista cuál es el objeto con ese ID:
