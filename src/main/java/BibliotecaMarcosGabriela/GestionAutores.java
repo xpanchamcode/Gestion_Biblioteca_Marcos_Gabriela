@@ -45,11 +45,11 @@ public class GestionAutores {
             return null;
     }
 
-    public static List<DTOUsuario> getListaUsuarios() {
-        return listaUsuarios;
+    public static List<DTOAutor> getListaAutores() {
+        return listaAutores;
     }
 
-    public static void setListaUsuarios(List<DTOUsuario> listaUsuarios) {
-        GestionUsuarios.listaUsuarios = listaUsuarios;
+    public static void setListaAutores(List<DTOAutor> listaAutores) {
+        GestionAutores.listaAutores = listaAutores;
     }
 }
