@@ -6,10 +6,12 @@ import java.util.List;
 public class GestionLibros {
     private static List<DTOLibro> listaLibros;
 
+    //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionLibros() throws SQLException {
         listaLibros = DAOUsuario.readAllLibros();
     }
 
+    //Muestra todos los objetos almacenados en la lista de memoria:
     public static void mostrarLibros(){
         for (DTOLibro libro : listaLibros) {
             System.out.println(libro);

@@ -6,10 +6,12 @@ import java.util.List;
 public class GestionPrestamos {
     private static List<DTOPrestamo> listaPrestamos;
 
+    //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionPrestamos() throws SQLException {
         listaPrestamos = DAOPrestamo.readAllPrestamos();
     }
 
+    //Muestra todos los objetos almacenados en la lista de memoria:
     public static void mostrarPrestamos(){
         for (DTOPrestamo prestamo : listaPrestamos) {
             System.out.println(prestamo);

@@ -8,16 +8,19 @@ public class GestionLibroAutor {
     private Integer idAutor;
     public static List<DTOLibro_Autor> listaLibroAutor;
 
+    //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionLibroAutor() throws SQLException {
         listaLibroAutor = DAOLibro_Autor.readAllLibroAutor();
     }
 
+    //Muestra todos los objetos almacenados en la lista de memoria:
     public static void mostrar() {
-        for (DTOLibro_Autor matricula : listaLibroAutor) {
-            System.out.println(matricula);
+        for (DTOLibro_Autor libroAutor : listaLibroAutor) {
+            System.out.println(libroAutor);
         }
     }
 
+    //Método que devuelve si existe un libro específico escrito por un autor específico:
     public static boolean libroAutorExists(Integer idLibro, Integer idAutor) {
         boolean existe = false;
         //Busco en la lista si existe un objeto con esos IDs:
@@ -29,6 +32,7 @@ public class GestionLibroAutor {
         return existe;
     }
 
+    //Método que devuelve el objeto libroAutor si existe un libro específico escrito por un autor específico:
     public static DTOLibro_Autor getLibroAutorIfExists(Integer idLibro, Integer idAutor) {
         boolean existe = false;
         DTOLibro_Autor libroAutorDevuelto = null;

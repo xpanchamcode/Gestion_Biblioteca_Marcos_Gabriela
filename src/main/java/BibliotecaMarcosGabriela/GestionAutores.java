@@ -6,10 +6,12 @@ import java.util.List;
 public class GestionAutores {
     private static List<DTOAutor> listaAutores;
 
+    //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionAutores() throws SQLException {
         listaAutores = DTOAutor.readAllAutores();
     }
 
+    //Muestra todos los objetos almacenados en la lista de memoria:
     public static void mostrarAutores(){
         for (DTOAutor autor : listaAutores) {
             System.out.println(autor);

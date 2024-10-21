@@ -6,10 +6,12 @@ import java.util.List;
 public class GestionUsuarios {
     private static List<DTOUsuario> listaUsuarios;
 
+    //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionUsuarios() throws SQLException {
         listaUsuarios = DAOUsuario.readAllUsuarios();
     }
 
+    //Muestra todos los objetos almacenados en la lista de memoria:
     public static void mostrarUsuarios(){
         for (DTOUsuario usuario : listaUsuarios) {
             System.out.println(usuario);
