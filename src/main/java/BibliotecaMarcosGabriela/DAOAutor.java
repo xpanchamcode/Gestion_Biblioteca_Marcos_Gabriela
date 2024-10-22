@@ -60,7 +60,7 @@ public class DAOAutor {
     }
 
     //Para insertar un autor
-    public static void DTOAutor insertarAutor(DTOAutor autor) throws SQLException{
+    public static void insertAutor(DTOAutor autor) throws SQLException{
         try(PreparedStatement pst= conexion.prepareStatement(INSERTAUTOR)){
             pst.setString(1, autor.getNombre());
             pst.executeUpdate();
