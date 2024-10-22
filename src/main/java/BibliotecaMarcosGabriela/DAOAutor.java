@@ -11,8 +11,7 @@ public class DAOAutor {
     private static String READALLAUTORES= "SELECT * FROM Autor";
     private static String READAUTOR= "SELECT * FROM Autor WHERE id=?";
     private static String INSERTAUTOR= "INSERT INTO Autor (nombre) VALUES (?)";
-    //SE PUEDE HACER UPDATE DEL ID????
-    private static String UPDATEAUTOR ="UPDATE Autor SET id=?, nombre=?";
+    private static String UPDATEAUTOR ="UPDATE Autor SET nombre=? WHERE id=?";
     private static String DELETEAUTOR = "DELETE FROM Autor WHERE id=?";
 
     //Métodos
@@ -64,7 +63,8 @@ public class DAOAutor {
     //SE INSERTARÍA EL ID????
     public static  DTOAutor insertarAutor(DTOAutor autor) throws SQLException{
         try(PreparedStatement pst= conexion.prepareStatement(INSERTAUTOR)){
-            pst.setString(1, autor.getNombre());
+            pst.setInt(1, autor.getId());
+            pst.setString(2, autor.getNombre());
             pst.executeUpdate();
             GestionAutores.getListaAutores().add(autor);
         }
