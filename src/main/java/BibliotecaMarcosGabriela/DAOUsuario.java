@@ -86,4 +86,17 @@ public class DAOUsuario {
             pst.executeUpdate();
         }
     }
+
+    //Para obtener el último usuario insertado en la base de datos
+    public static DTOUsuario readUltimoUsuario() throws SQLException {
+        DTOUsuario usuario = null; // Variable para almacenar el último libro
+        try (Statement st = conexion.createStatement();
+             ResultSet rs = st.executeQuery(READULTIMOUSUARIO)) {
+            if (rs.next()) {
+                usuario = getUsuario(rs);
+            }
+        }
+        return usuario;
+    }
+
 }

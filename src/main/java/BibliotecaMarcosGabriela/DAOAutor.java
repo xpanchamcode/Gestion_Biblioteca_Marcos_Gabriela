@@ -11,6 +11,8 @@ public class DAOAutor {
     private static String READALLAUTORES= "SELECT * FROM Autor";
     private static String READAUTOR= "SELECT * FROM Autor WHERE id=?";
     private static String READULTIMOAUTOR ="SELECT * FROM Autor ORDER BY idAutor DESC LIMIT 1";
+
+    //SIGO SIN ENTENDER POR QUE VA EL ID EN EL INSERT SI ES AUTO INCREMENT
     private static String INSERTAUTOR= "INSERT INTO Autor (nombre) VALUES (?) WHERE id=?";
     private static String UPDATEAUTOR ="UPDATE Autor SET nombre=? WHERE id=?";
     private static String DELETEAUTOR = "DELETE FROM Autor WHERE id=?";
@@ -86,5 +88,17 @@ public class DAOAutor {
             pst.setInt(2, autor.getId());
             pst.executeUpdate();
         }
+    }
+
+    //Para leer el último autor introducido
+    public static DTOAutor readUltimoAutor() throws SQLException {
+        DTOAutor autor = null;
+        try (Statement st = conexion.createStatement();
+             ResultSet rs = st.executeQuery(READULTIMOAUTOR)) {
+            if (rs.next()) {
+                autor = getAutor(rs);
+            }
+        }
+        return autor;
     }
 }

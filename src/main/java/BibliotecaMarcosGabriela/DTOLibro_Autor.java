@@ -31,8 +31,6 @@ public class DTOLibro_Autor {
     }
 
     //To String
-
-
     @Override
     public String toString() {
         return String.format(

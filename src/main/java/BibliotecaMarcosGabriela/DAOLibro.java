@@ -89,4 +89,17 @@ public class DAOLibro {
             pst.executeUpdate();
         }
     }
+
+    //Para obtener el último libro insertado en la base de datos
+    public static DTOLibro readUltimoLibro() throws SQLException {
+        DTOLibro libro = null; // Variable para almacenar el último libro
+        try (Statement st = conexion.createStatement();
+             ResultSet rs = st.executeQuery(READULTIMOLIBRO)) {
+            if (rs.next()) {
+                libro = getLibro(rs);
+            }
+        }
+        return libro;
+    }
+
 }

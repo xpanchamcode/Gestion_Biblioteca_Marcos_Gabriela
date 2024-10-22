@@ -1,17 +1,26 @@
 package BibliotecaMarcosGabriela;
 
+import java.sql.SQLException;
+
 public class DTOLibro {
     //Atributos
     private Integer id;
     //Atributo contador para aumentar el id
     //Se establece como ultimo id añadido el mayor que quedó guardado en la base de datos
-    private static Integer contadorId=DAOLibro.readUltimoLibro;
+    private static Integer contadorId=null;
     private String titulo;
     private String isbn;
 
     //Constructor
-    public DTOLibro(String titulo, String isbn) {
-        this.id=++contadorId;
+    public DTOLibro(String titulo, String isbn) throws SQLException {
+        if (contadorId == null) {
+            DTOLibro ultimoLibro = DAOLibro.readUltimoLibro();
+            if (ultimoLibro != null) {
+                contadorId = ultimoLibro.getId();
+            } else {
+                contadorId = 0;
+            }
+        }
         this.titulo = titulo;
         this.isbn=isbn;
     }
