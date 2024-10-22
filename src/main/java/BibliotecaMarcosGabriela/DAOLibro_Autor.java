@@ -128,7 +128,7 @@ public class DAOLibro_Autor {
             //Ejecutamos el update
             pst.executeUpdate();
 
-            GestionLibroAutor.getListaLibroAutor().add(libroAutor); //Lo añadimos a la lista de libroAutor
+//            GestionLibroAutor.getListaLibroAutor().add(libroAutor); //Lo añadimos a la lista de libroAutor
         }
     }
 
@@ -142,37 +142,45 @@ public class DAOLibro_Autor {
             //Ejecutamos el update
             pst.executeUpdate();
 
-            GestionLibroAutor.getListaLibroAutor().add(libroAutor); //Lo añado a la lista de libroAutor
+//            GestionLibroAutor.getListaLibroAutor().add(libroAutor); //Lo añado a la lista de libroAutor
         }
     }
 
     //Borra los libroAutor según el id de un autor
-    public static void deleteLibrosAutor(DTOAutor autor) throws SQLException {
+    public static void deleteLibrosAutor(Integer id) throws SQLException {
         try (PreparedStatement pst = conexion.prepareStatement(DELETELIBRO, Statement.RETURN_GENERATED_KEYS)) {
             //Convertimos el ? del preparedStatement en el ID del autor a borrar sus libros
-            pst.setInt(1, autor.getId());
-            pst.executeUpdate();//Ejecutamos
-
-
-           //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
-
-
-        }
-
-    }
-
-    //Borra los libroAutor según el id de una libro
-    public static void deleteAutoresLibro(DTOLibro libro) throws SQLException {
-        try (PreparedStatement pst = conexion.prepareStatement(DELETEAUTOR, Statement.RETURN_GENERATED_KEYS)) {
-            //Convertimos el ? del preparedStatement en el ID del libro a borrar sus autores
-            pst.setInt(1, libro.getId());
+            pst.setInt(1, id);
             pst.executeUpdate();//Ejecutamos
 
 
             //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
-
-
+            if (!GestionLibros.getListaLibros().isEmpty()) { //Si existen libros
+                for (DTOLibro libro : GestionLibros.getListaLibros()) { //Recorro el array de objetos de libro
+                    if (GestionLibroAutor.libroAutorExists(libro.getId(), id)) //Compruebo si ese libro ha sido escrito por el autor a borrar
+                        //Borro la relación libroAutor de la lista obteniendo el objeto libroAutor con el id del libro y del autor en cuestión:
+                        GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(libro.getId(), id));
+                }
+            }
         }
+    }
 
+    //Borra los libroAutor según el id de una libro
+    public static void deleteAutoresLibro(Integer id) throws SQLException {
+        try (PreparedStatement pst = conexion.prepareStatement(DELETEAUTOR, Statement.RETURN_GENERATED_KEYS)) {
+            //Convertimos el ? del preparedStatement en el ID del libro a borrar sus autores
+            pst.setInt(1, id);
+            pst.executeUpdate();//Ejecutamos
+
+
+            //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
+            if (!GestionAutores.getListaAutores().isEmpty()) { //Si existen autores
+                for (DTOAutor autor : GestionAutores.getListaAutores()) { //Recorro el array de objetos de autor
+                    if (GestionLibroAutor.libroAutorExists(autor.getId(), id)) //Compruebo si ese autor ha escrito ese libro a borrar
+                        // Borro la relación libroAutor de la lista obteniendo el objeto libroAutor con el id del autor y del libro en cuestión:
+                        GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(autor.getId(), id));
+                }
+            }
+        }
     }
 }
