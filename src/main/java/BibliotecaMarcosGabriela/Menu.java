@@ -43,18 +43,17 @@ public class Menu {
             System.out.println("""
                     Elige una opción:
                     1. Insertar libro
-                    2. Leer todos los alumnos
-                    3. Leer un alumno según ID
-                    4. Actualizar los datos de un alumno
-                    5. Borrar un alumno
-                    6. Menú de ordenar alumno
-                    7. Volver atrás
+                    2. Leer todos los libros
+                    3. Leer un libro según ID
+                    4. Actualizar los datos de un libro
+                    5. Borrar un libro
+                    6. Volver atrás
                     """);
             opcion = t.nextInt(); t.nextLine();
             switch (opcion){
                 case 1 -> {
-                    //Pido los datos del alumno por teclado y lo inserto en la BD y la lista (a la vez en el método)
-                    System.out.println("Introduce los datos del alumno:");
+                    //Pido los datos del libro por teclado y lo inserto en la BD y la lista
+                    System.out.println("Introduce los datos del libro:");
                     System.out.println("Nombre: ");
                     String Nombre = t.nextLine();
                     System.out.println("Fecha de nacimiento (yyyy-mm-dd): ");
@@ -121,7 +120,7 @@ public class Menu {
                 case 7 -> System.out.println("Volviendo atrás.");
                 default -> System.out.println("Opción errónea, inténtalo de nuevo");
             }
-        }while(opcion!=7);
+        }while(opcion!=6);
     }
 
     public void menuAsignatura() throws SQLException {

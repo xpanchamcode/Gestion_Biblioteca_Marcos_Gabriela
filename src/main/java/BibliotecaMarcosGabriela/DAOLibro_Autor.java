@@ -13,6 +13,7 @@ public class DAOLibro_Autor {
     private static String AÑADIRLIBROAUTOR = "INSERT INTO Libro_Autor VALUES(?, ?)";
     private static String DELETELIBRO = "DELETE FROM Libro_Autor WHERE idLibro = ?";
     private static String DELETEAUTOR = "DELETE FROM Libro_Autor WHERE idAutor = ?";
+    private static String UPDATEAUTORLIBRO = "UPDATE Libro_Autor SET idAutor = ? WHERE idLibro = ? AND idAutor = ?";
 
     public static DTOLibro_Autor getLibroAutor(ResultSet rs) throws SQLException {
         //Guardamos como variables en nuestro programa cada uno de los datos traidos desde las consultas
@@ -144,6 +145,18 @@ public class DAOLibro_Autor {
 
 //            GestionLibroAutor.getListaLibroAutor().add(libroAutor); //Lo añado a la lista de libroAutor
         }
+    }
+
+    public static void updateAutorLibro(DTOLibro_Autor libroAutor, DTOAutor autor) throws SQLException{
+        try(PreparedStatement pst = conexion.prepareStatement(UPDATEAUTORLIBRO)){
+            pst.setInt(1, autor.getId());
+            pst.setInt(2, libroAutor.getIdLibro());
+            pst.setInt(3, libroAutor.getIdAutor());
+            pst.executeUpdate();
+        }
+
+        //Updatea el objeto libroAutor en el menu y le cambia el idAutor al nuevo
+        GestionLibroAutor.getLibroAutorIfExists(libroAutor.getIdLibro(), libroAutor.getIdAutor()).setIdAutor(autor.getId());
     }
 
     //Borra los libroAutor según el id de un autor
