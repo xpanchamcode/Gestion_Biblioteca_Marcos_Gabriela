@@ -10,7 +10,7 @@ public class GestionLibroAutor {
 
     //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionLibroAutor() throws SQLException {
-        listaLibroAutor = DAOLibro_Autor.readAllLibroAutor();
+        listaLibroAutor = DAOLibro_Autor.readAll();
     }
 
     //Muestra todos los objetos almacenados en la lista de memoria:
