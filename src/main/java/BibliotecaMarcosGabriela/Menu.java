@@ -44,7 +44,7 @@ public class Menu {
                     Elige una opción:
                     1. Insertar libro
                     2. Leer todos los libros
-                    3. Leer un libro según ID
+                    3. Leer un libro por ID
                     4. Actualizar los datos de un libro
                     5. Borrar un libro
                     6. Volver atrás
@@ -54,206 +54,191 @@ public class Menu {
                 case 1 -> {
                     //Pido los datos del libro por teclado y lo inserto en la BD y la lista
                     System.out.println("Introduce los datos del libro:");
-                    System.out.println("Nombre: ");
-                    String Nombre = t.nextLine();
-                    System.out.println("Fecha de nacimiento (yyyy-mm-dd): ");
-                    Date FechaNacimiento = Date.valueOf(t.nextLine());
-                    System.out.println("Teléfono: ");
-                    String Telefono = t.nextLine();
-                    System.out.println("Dirección: ");
-                    String Direccion = t.nextLine();
+                    System.out.println("Título: ");
+                    String titulo = t.nextLine();
+                    System.out.println("Isbn: ");
+                    String isbn = t.nextLine();
 //                    if (GestionAlumnos.alumnoExists(ID)) //Si ya existe un alumno con ese ID, no dejará crearlo
 //                        System.out.println("Ya existe un alumno con ese ID. Usa un update, no un insert.");
-                    DAOAlumno.insertarAlumno(new DTOAlumno(Nombre, FechaNacimiento, Telefono, Direccion));
+                    DAOLibro.insertLibro(new DTOLibro(titulo,isbn));
                 }
                 case 2 -> {
-                    List<DTOAlumno> listaAlumnos = DAOAlumno.readAll();
-                    if(!listaAlumnos.isEmpty()) {
-                        for (DTOAlumno alumnoN : listaAlumnos) {
-                            System.out.println(alumnoN);
+                    List<DTOLibro> listaLibros = DAOLibro.readAllLibros();
+                        if(!listaLibros.isEmpty()) {
+                        for (DTOLibro libroN : listaLibros) {
+                            System.out.println(libroN);
                         }
                     }
-                    else System.out.println("No existen alumnos en la BD.");
+                    else System.out.println("No existen libros en la BD.");
                 }
                 case 3 -> {
-                    System.out.println("ID del alumno a leer: ");
+                    System.out.println("ID del libro: ");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAlumnos.alumnoExists(ID)) //Si se ha encontrado un alumno con ese ID
-                        //Leo por pantalla el objeto DTOAlumno recibido por la consulta con su to String por defecto
-                        System.out.println(DAOAlumno.readAlumnoID(ID));
+                    if (GestionLibros.libroExists(ID)) //Si se ha encontrado un libro con ese ID
+                        //Leo por pantalla el objeto  recibido por la consulta con su to String por defecto
+                        System.out.println(DAOLibro.readLibroId(ID));
                     else
-                        System.out.println("No existe un alumno con ese ID.");
+                        System.out.println("No existe un libro con ese ID.");
                 }
                 case 4 -> {
-                    System.out.println("ID del alumno a modificar:");
+                    System.out.println("ID del libro a modificar:");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAlumnos.alumnoExists(ID)){ //Si se ha encontrado un alumno con ese ID
-                        DTOAlumno alumnoAupdatear = GestionAlumnos.getAlumnoIfExists(ID); ///Creo un alias para el alumno
+                    if (GestionLibros.libroExists(ID)){ //Si se ha encontrado un libro con ese ID
+                        DTOLibro libroAupdatear = GestionLibros.getLibroIfExists(ID); //Creo un alias para el libro
                         //pido sus nuevos datos, los setteo en el objeto existente y envío el objeto actualizado al método
 
-                        System.out.println("Introduce los nuevos datos del alumno:");
-                        System.out.println("Nombre: ");
-                        alumnoAupdatear.setNombre(t.nextLine());
-                        System.out.println("Fecha de nacimiento (yyyy-mm-dd): ");
-                        alumnoAupdatear.setFechaNacimiento(Date.valueOf(t.nextLine()));
-                        System.out.println("Teléfono: ");
-                        alumnoAupdatear.setTelefono(t.nextLine());
-                        System.out.println("Dirección: ");
-                        alumnoAupdatear.setDireccion(t.nextLine());
+                        System.out.println("Introduce los nuevos datos del libro:");
+                        System.out.println("Título: ");
+                        libroAupdatear.setTitulo(t.nextLine());
+                        System.out.println("Isbn: ");
+                        libroAupdatear.setIsbn(t.nextLine());
 
-                        DAOAlumno.updateAlumno(alumnoAupdatear); //Lo modifico en la BD
+                        DAOLibro.updateLibro(libroAupdatear); //Lo modifico en la BD
                     }
                     else
                         System.out.println("No existe un alumno con ese ID");
                 }
                 case 5 -> {
-                    System.out.println("ID del alumno a eliminar: ");
+                    System.out.println("ID del libro a eliminar: ");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAlumnos.alumnoExists(ID)) //Si se ha encontrado un alumno con ese ID,
-                        //mando el alumno al método.
-                        //Dentro se elimina de la lista global alumno y se eliminan sus matrículas
-                        DAOAlumno.deleteAlumno(GestionAlumnos.getAlumnoIfExists(ID));
+                    if (GestionLibros.libroExists(ID)) //Si se ha encontrado un libro con ese ID,
+                        DAOLibro.deleteLibro(GestionLibros.getLibroIfExists(ID));
                     else
-                        System.out.println("No existe un alumno con ese ID");
+                        System.out.println("No existe un libro con ese ID");
                 }
-                case 6 -> menuOrdenAlumno();
-                case 7 -> System.out.println("Volviendo atrás.");
+                case 6 -> System.out.println("Volviendo atrás.");
                 default -> System.out.println("Opción errónea, inténtalo de nuevo");
             }
         }while(opcion!=6);
     }
 
-    public void menuAsignatura() throws SQLException {
+    public void menuAutor() throws SQLException {
         int opcion = 0;
         do {
             System.out.println("""
                     Elige una opción:
-                    1. Insertar asignatura
-                    2. Leer todas los asignaturas
-                    3. Leer una asignatura según ID
-                    4. Actualizar los datos de una asignatura
-                    5. Borrar una asignatura
-                    6. Menú de ordenar asignatura
-                    7. Volver atrás
+                    1. Insertar autor
+                    2. Leer todos los autores
+                    3. Leer un autor por ID
+                    4. Actualizar los datos de un autor
+                    5. Borrar un autor
+                    6. Volver atrás
                     """);
             opcion = t.nextInt(); t.nextLine();
             switch (opcion){
                 case 1 -> {
-                    //Pido los datos de la asignatura por teclado y la inserto en la BD y la lista (a la vez en el método)
-                    System.out.println("Introduce el nombre de la asignatura:");
+                    //Pido los datos del autor por teclado y lo inserto en la BD y la lista (a la vez en el método)
+                    System.out.println("Introduce el nombre del autor:");
                     String Nombre = t.nextLine();
-                    System.out.println("Introduce sus horas semanales:");
-                    Integer HorasSemanales = t.nextInt(); t.nextLine();
-
-                    DAOAsignatura.insertAsignatura(new DTOAsignatura(Nombre, HorasSemanales));
+                    DAOAutor.insertAutor(new DTOAutor(Nombre));
                 }
                 case 2 -> {
-                    List<DTOAsignatura> listaAsignaturas = DAOAsignatura.readAllAsignaturas();
-                    if(!listaAsignaturas.isEmpty()) {
-                        for (DTOAsignatura asignatura : listaAsignaturas) {
-                            System.out.println(asignatura);
+                    List<DTOAutor> listaAutores = DAOAutor.readAllAutores();
+                    if(!listaAutores.isEmpty()) {
+                        for (DTOAutor autor : listaAutores) {
+                            System.out.println(autor);
                         }
                     }
-                    else System.out.println("No existen asignaturas en la BD.");
+                    else System.out.println("No existen autores en la BD.");
                 }
                 case 3 -> {
-                    System.out.println("ID de la asignatura a leer: ");
+                    System.out.println("ID del autor a leer: ");
                     Integer ID = t.nextInt(); t.nextLine();
                     //Mando el ID introducido al método con la consulta
-                    if (GestionAsignaturas.asignaturaExists(ID)) //Si se ha encontrado una asignatura con ese ID
-                        //Leo por pantalla el objeto DTOAsignatura recibido por la consulta con su to String por defecto
-                        System.out.println(DAOAsignatura.readAsignaturaID(ID));
+                    if (GestionAutores.autorExists(ID))
+                        System.out.println(DAOAutor.readAutorId(ID));
                     else
-                        System.out.println("No existe una asignatura con ese ID.");
+                        System.out.println("No existe ningún autor con ese ID.");
                 }
                 case 4 -> {
-                    System.out.println("ID de la asignatura a modificar:");
+                    System.out.println("ID del autor a modificar:");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAsignaturas.asignaturaExists(ID)) {//Si se ha encontrado una asignatura con ese ID,
-                        DTOAsignatura asignaturaAupdatear = GestionAsignaturas.getAsignaturaIfExists(ID);
-                        //Creo un alias para la asignatura, pido sus nuevos datos, los setteo en el objeto
-                        //existente y envío el objeto actualizado al método
-
-                        System.out.println("Introduce los nuevos datos de la asignatura:");
+                    if (GestionAutores.autorExists(ID)) {
+                        DTOAutor autorAupdatear = GestionAutores.getAutorIfExists(ID);
+                        System.out.println("Introduce los nuevos datos del autor:");
                         System.out.println("Nombre: ");
-                        asignaturaAupdatear.setNombre(t.nextLine());
-                        System.out.println("Horas semanales: ");
-                        asignaturaAupdatear.setHorasSemanales(t.nextInt());
-
-                        DAOAsignatura.updateAsignatura(asignaturaAupdatear); //Lo modifico en la BD
+                        autorAupdatear.setNombre(t.nextLine());
+                        DAOAutor.updateAutor(autorAupdatear);
                     }
                     else
-                        System.out.println("No existe una asignatura con ese ID");
+                        System.out.println("No existe ningún autor con ese ID");
                 }
                 case 5 -> {
-                    System.out.println("ID de la asignatura a eliminar: ");
+                    System.out.println("ID del autor a eliminar: ");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAsignaturas.asignaturaExists(ID)) //Si se ha encontrado una asignatura con ese ID,
-                        //mando la asignatura al método.
-                        //Dentro se elimina de la lista global de asignaturas y se eliminan sus matrículas
-                        DAOAsignatura.deleteAsignatura(GestionAsignaturas.getAsignaturaIfExists(ID));
+                    if (GestionAutores.autorExists(ID))
+                        DAOAutor.deleteAutor(GestionAutores.getAutorIfExists(ID));
                     else
-                        System.out.println("No existe una asignatura con ese ID");
+                        System.out.println("No existe ningún autor con ese ID");
                 }
-                case 6 -> menuOrdenAsignatura();
-                case 7 -> System.out.println("Volviendo atrás.");
+                case 6 -> System.out.println("Volviendo atrás.");
                 default -> System.out.println("Opción errónea, inténtalo de nuevo");
             }
-        }while(opcion!=7);
+        }while(opcion!=6);
 
     }
-    public void menuOrdenAlumno() throws SQLException {
+
+    public void menuUsuario() throws SQLException {
         int opcion = 0;
         do {
             System.out.println("""
-                    Elige una opción de ordenación:
-                    1. ID
-                    2. Nombre
-                    3. Volver al menú anterior
+                    Elige una opción:
+                    1. Insertar usuario
+                    2. Leer todos los usuario
+                    3. Leer un usuario por ID
+                    4. Actualizar los datos de un usuario
+                    5. Borrar un usuario
+                    6. Volver atrás
                     """);
             opcion = t.nextInt(); t.nextLine();
             switch (opcion){
                 case 1 -> {
-                    GestionAlumnos.ordenarLista();
-                    System.out.println("Alumnos ordenados por ID: ");
-                    GestionAlumnos.mostrarAlumnos();
+                    System.out.println("Introduce el nombre del usuario:");
+                    String Nombre = t.nextLine();
+                    DAOUsuario.insertUsuario(new DTOUsuario(Nombre));
                 }
                 case 2 -> {
-                    GestionAlumnos.ordenarListaNombre();
-                    System.out.println("Alumnos ordenados por Nombre: ");
-                    GestionAlumnos.mostrarAlumnos();
+                    List<DTOUsuario> listaUsuarios = DAOUsuario.readAllUsuarios();
+                    if(!listaUsuarios.isEmpty()) {
+                        for (DTOUsuario usuario : listaUsuarios) {
+                            System.out.println(usuario);
+                        }
+                    }
+                    else System.out.println("No existen usuarios en la BD.");
                 }
-                case 3 -> System.out.println("Volviendo atrás.");
+                case 3 -> {
+                    System.out.println("ID del usuario a leer: ");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionUsuarios.usuarioExists(ID))
+                        System.out.println(DAOUsuario.readUsuarioId(ID));
+                    else
+                        System.out.println("No existe ningún usuario con ese ID.");
+                }
+                case 4 -> {
+                    System.out.println("ID del usuario a modificar:");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionUsuarios.usuarioExists(ID)) {
+                        DTOUsuario usuarioAupdatear = GestionUsuarios.getUsuarioIfExists(ID);
+                        System.out.println("Introduce los nuevos datos del usuario:");
+                        System.out.println("Nombre: ");
+                        usuarioAupdatear.setNombre(t.nextLine());
+                        DAOUsuario.updateUsuario(usuarioAupdatear);
+                    }
+                    else
+                        System.out.println("No existe ningún usuario con ese ID");
+                }
+                case 5 -> {
+                    System.out.println("ID del usuario a eliminar: ");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionUsuarios.usuarioExists(ID))
+                        DAOUsuario.deleteUsuario(GestionUsuarios.getUsuarioIfExists(ID));
+                    else
+                        System.out.println("No existe ningún usuario con ese ID");
+                }
+                case 6 -> System.out.println("Volviendo atrás.");
                 default -> System.out.println("Opción errónea, inténtalo de nuevo");
             }
-        }while(opcion!=3);
-    }
-
-    public void menuOrdenAsignatura() throws SQLException {
-        int opcion = 0;
-        do {
-            System.out.println("""
-                    Elige una opción de ordenación:
-                    1. ID
-                    2. Nombre
-                    3. Volver al menú anterior
-                    """);
-            opcion = t.nextInt(); t.nextLine();
-            switch (opcion){
-                case 1 -> {
-                    GestionAsignaturas.ordenarLista();
-                    System.out.println("Asignaturas ordenadas por ID: ");
-                    GestionAsignaturas.mostrarAsignaturas();
-                }
-                case 2 -> {
-                    GestionAsignaturas.ordenarListaNombre();
-                    System.out.println("Asignaturas ordenadas por Nombre: ");
-                    GestionAsignaturas.mostrarAsignaturas();
-                }
-                case 3 -> System.out.println("Volviendo atrás.");
-                default -> System.out.println("Opción errónea, inténtalo de nuevo");
-            }
-        }while(opcion!=3);
+        }while(opcion!=6);
     }
 
     public void menuMatricula() throws SQLException {
