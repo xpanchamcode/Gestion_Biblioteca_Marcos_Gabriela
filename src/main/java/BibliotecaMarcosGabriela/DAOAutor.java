@@ -10,6 +10,7 @@ public class DAOAutor {
     //Querys
     private static String READALLAUTORES= "SELECT * FROM Autor";
     private static String READAUTOR= "SELECT * FROM Autor WHERE id=?";
+    private static String READULTIMOAUTOR ="SELECT * FROM Autor ORDER BY idAutor DESC LIMIT 1";
     private static String INSERTAUTOR= "INSERT INTO Autor (nombre) VALUES (?) WHERE id=?";
     private static String UPDATEAUTOR ="UPDATE Autor SET nombre=? WHERE id=?";
     private static String DELETEAUTOR = "DELETE FROM Autor WHERE id=?";
@@ -36,15 +37,15 @@ public class DAOAutor {
     }
     //Para leer el id de autor
     public static DTOAutor readAutorId(Integer id) throws SQLException{
-        DTOAutor autorDev;
+        DTOAutor autor;
         try(PreparedStatement pst = conexion.prepareStatement(READAUTOR)){
             pst.setInt(1,id);
             try(ResultSet rs = pst.executeQuery()){
                 rs.next();
-                autorDev=getAutor(rs);
+                autor=getAutor(rs);
             }
         }
-        return autorDev;
+        return autor;
     }
     //Para leer un autor
     public static DTOAutor readAutor (DTOAutor autor) throws SQLException{
@@ -63,6 +64,7 @@ public class DAOAutor {
     public static void insertAutor(DTOAutor autor) throws SQLException{
         try(PreparedStatement pst= conexion.prepareStatement(INSERTAUTOR)){
             pst.setString(1, autor.getNombre());
+            pst.setInt(2, autor.getId());
             pst.executeUpdate();
         }
     }
@@ -70,8 +72,9 @@ public class DAOAutor {
     //Para hacer update de un autor
     public static void updateAutor (DTOAutor autor) throws SQLException{
         try(PreparedStatement pst = conexion.prepareStatement(UPDATEAUTOR)){
-        pst.setString(1, autor.getNombre());
-        pst.executeUpdate();
+            pst.setString(1, autor.getNombre());
+            pst.setInt(2, autor.getId());
+            pst.executeUpdate();
         }
     }
 
@@ -80,6 +83,7 @@ public class DAOAutor {
         Integer idAutor= autor.getId();
         try (PreparedStatement pst = conexion.prepareStatement(DELETEAUTOR)){
             pst.setInt(1, autor.getId());
+            pst.setInt(2, autor.getId());
             pst.executeUpdate();
         }
     }

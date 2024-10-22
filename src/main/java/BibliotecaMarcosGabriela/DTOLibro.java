@@ -41,12 +41,20 @@ public class DTOLibro {
         DTOLibro.contadorId = contadorId;
     }
 
-    public String getNombre() {
+    public String getTitulo() {
         return titulo;
     }
 
-    public void setNombre(String nombre) {
-        this.titulo = nombre;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
     //To String
 

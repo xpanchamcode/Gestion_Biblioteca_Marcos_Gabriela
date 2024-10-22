@@ -8,7 +8,7 @@ public class GestionLibros {
 
     //En el constructor por defecto inicia la lista de objetos y la obtiene haciendo un readAll a la BD
     public GestionLibros() throws SQLException {
-        listaLibros = DAOUsuario.readAllLibros();
+        listaLibros = DAOLibro.readAllLibros();
     }
 
     //Muestra todos los objetos almacenados en la lista de memoria:

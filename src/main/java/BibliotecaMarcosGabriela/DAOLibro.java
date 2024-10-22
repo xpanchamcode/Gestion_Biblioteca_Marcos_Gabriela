@@ -9,53 +9,84 @@ public class DAOLibro {
 
     //Querys
     private static String READALLLIBROS = "SELECT * FROM Libro";
-    private static String READLIBRO = "SELECT * FROM Libro WHERE id=?";
-    private static String INSERTLIBRO = "INSERT INTO Libro (titulo,isbn) VALUES (?,?)";
-    //SE PUEDE HACER UPDATE DEL ID????
-    private static String UPDATElIBRO ="UPDATE Libro SET id=?, titulo=?, isbn=?";
-    private static String DELETELIBRO = "DELETE FROM Autor WHERE id=?";
+    private static String READLIBRO= "SELECT * FROM Libro WHERE id=?";
+    private static String READULTIMOLIBRO ="SELECT * FROM Libro ORDER BY idLibro DESC LIMIT 1";
+    private static String INSERTLIBRO= "INSERT INTO Libro (titulo, isbn) VALUES (?,?) WHERE id=?";
+    private static String UPDATELIBRO ="UPDATE Libro SET titulo=?, isbn=? WHERE id=?";
+    private static String DELETELIBRO = "DELETE FROM Libro WHERE id=?";
 
     //Métodos
-    //Para instanciar un autor con los datos
-    public static DTOAutor getAutor(ResultSet rs) throws SQLException{
+    //Para instanciar un libro con los datos
+    public static DTOLibro getLibro(ResultSet rs) throws SQLException{
         Integer id = rs.getInt("id");
-        String nombre =rs.getString("nombre");
-        DTOAutor autor = new DTOAutor(id, nombre);
-        return autor;
+        String titulo =rs.getString("titulo");
+        String isbn= rs.getString("isbn");
+        DTOLibro libro = new DTOLibro(id, titulo, isbn);
+        return libro;
     }
-    //Para instanciar una lista de autores
-    public static List<DTOAutor> readAll() throws SQLException{
-        List<DTOAutor> listaAutores = new ArrayList<>();
+    //Para instanciar una lista de libro
+    public static List<DTOLibro> readAllLibros() throws SQLException{
+        List<DTOLibro> listaLibros = new ArrayList<>();
         try(Statement st = conexion.createStatement();
             ResultSet rs= st.executeQuery(READALLLIBROS)){
             while (rs.next()){
-                DTOAutor autor = getAutor(rs);
-                listaAutores.add(autor);
+                DTOLibro libro = getLibro(rs);
+                listaLibros.add(libro);
             }
         }
-        return listaAutores;
+        return listaLibros;
     }
-    //Para leer el id de autor
-    public static DTOAutor readAutorId(Integer id) throws SQLException{
-        DTOAutor autorDev;
+    //Para leer el id de libro
+    public static DTOLibro readLibroId(Integer id) throws SQLException{
+        DTOLibro libroDev;
         try(PreparedStatement pst = conexion.prepareStatement(READLIBRO)){
             pst.setInt(1,id);
             try(ResultSet rs = pst.executeQuery()){
                 rs.next();
-                autorDev=getAutor(rs);
+                libroDev=getLibro(rs);
             }
         }
-        return autorDev;
+        return libroDev;
     }
-    //Para leer un autor
-    public static DTOAutor readAutor (DTOAutor autor) throws SQLException{
-        DTOAutor autorDev;
+    //Para leer un libro
+    public static DTOLibro readLibro (DTOLibro libro) throws SQLException{
+        DTOLibro libroDev;
         try (PreparedStatement pst = conexion.prepareStatement(READLIBRO)){
-            pst.setInt(1,autor.getId());
+            pst.setInt(1,libro.getId());
             try (ResultSet rs = pst.executeQuery()){
                 rs.next();
-                autorDev=getAutor(rs);
+                libroDev=getLibro(rs);
             }
         }
-        return autorDev;
+        return libroDev;
     }
+
+    //Para insertar un libro
+    public static void insertLibro(DTOLibro libro) throws SQLException{
+        try(PreparedStatement pst= conexion.prepareStatement(INSERTLIBRO)){
+            pst.setString(1, libro.getTitulo());
+            pst.setString(2, libro.getIsbn());
+            pst.setInt(3, libro.getId());
+            pst.executeUpdate();
+        }
+    }
+
+    //Para hacer update de un libro
+    public static void updateLibro (DTOLibro libro) throws SQLException{
+        try(PreparedStatement pst = conexion.prepareStatement(UPDATELIBRO)){
+            pst.setString(1, libro.getTitulo());
+            pst.setString(2, libro.getIsbn());
+            pst.setInt(3, libro.getId());
+            pst.executeUpdate();
+        }
+    }
+
+    //Para borrar un libro
+    public static void deleteLibro (DTOLibro libro) throws SQLException{
+        Integer idLibro= libro.getId();
+        try (PreparedStatement pst = conexion.prepareStatement(DELETELIBRO)){
+            pst.setInt(1, libro.getId());
+            pst.executeUpdate();
+        }
+    }
+}
