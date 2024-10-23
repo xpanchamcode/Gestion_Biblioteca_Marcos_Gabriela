@@ -276,14 +276,14 @@ public class Menu {
                     if (GestionUsuarios.usuarioExists(ID)) {
                         DTOUsuario usuarioABorrar = GestionUsuarios.getUsuarioIfExists(ID);
 
-                        //Borrado de las listas de préstamo donde coincida ese usuario:
-                        if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
-                            for (DTOPrestamo prestamo : GestionPrestamos.getListaPrestamos()) { //Recorro el array de objetos de prestamos
-                                if (prestamo.getUsuarioId().equals(usuarioABorrar.getId())) { //Compruebo si el prestamo ha sido pedido por ese usuario
-                                    GestionPrestamos.getListaPrestamos().remove(prestamo);
-                                }
-                            } //En la BD se borrarán los préstamos con el DELETE ON CASCADE
-                        }
+//                        //Borrado de las listas de préstamo donde coincida ese usuario:
+//                        if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
+//                            for (DTOPrestamo prestamo : GestionPrestamos.getListaPrestamos()) { //Recorro el array de objetos de prestamos
+//                                if (prestamo.getUsuarioId().equals(usuarioABorrar.getId())) { //Compruebo si el prestamo ha sido pedido por ese usuario
+//                                    GestionPrestamos.getListaPrestamos().remove(prestamo);
+//                                }
+//                            } //En la BD se borrarán los préstamos con el DELETE ON CASCADE
+//                        }
 
                         DAOUsuario.deleteUsuario(usuarioABorrar);//Borrado de la BD del usuario
                     }
