@@ -9,7 +9,7 @@ public class JDBC {
     private static String USUARIO = "root";
     private static String OS;
     private static String PASSWD;
-    private static String URL = "";
+    private static String URL = "jdbc:mariadb://localhost:3306/";
 
     private static Connection conexion = null;
 
