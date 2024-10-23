@@ -22,7 +22,7 @@ public class Menu {
                     2. Menú autor
                     3. Menú usuario
                     4. Menú préstamo
-                    5. Menú Libro-Autor
+                    5. Menú libro-autor
                     6. Salir
                     """);
             opcion = t.nextInt(); t.nextLine();
@@ -59,15 +59,15 @@ public class Menu {
                     String titulo = t.nextLine();
                     System.out.println("Isbn: ");
                     String isbn = t.nextLine();
-//                    if (GestionAlumnos.alumnoExists(ID)) //Si ya existe un alumno con ese ID, no dejará crearlo
-//                        System.out.println("Ya existe un alumno con ese ID. Usa un update, no un insert.");
-                    DAOLibro.insertLibro(new DTOLibro(titulo,isbn));
+                    DTOLibro libro = new DTOLibro(titulo,isbn);
+                    DAOLibro.insertLibro(libro); //Añadimos a la BD
+                    GestionLibros.getListaLibros().add(libro); //Añadimos a la lista
                 }
                 case 2 -> {
                     List<DTOLibro> listaLibros = DAOLibro.readAllLibros();
                         if(!listaLibros.isEmpty()) {
-                        for (DTOLibro libroN : listaLibros) {
-                            System.out.println(libroN);
+                        for (DTOLibro libro : listaLibros) {
+                            System.out.println(libro);
                         }
                     }
                     else System.out.println("No existen libros en la BD.");
@@ -76,7 +76,7 @@ public class Menu {
                     System.out.println("ID del libro: ");
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionLibros.libroExists(ID)) //Si se ha encontrado un libro con ese ID
-                        //Leo por pantalla el objeto  recibido por la consulta con su to String por defecto
+                        //Leo por pantalla el objeto recibido por la consulta con su to String por defecto
                         System.out.println(DAOLibro.readLibroId(ID));
                     else
                         System.out.println("No existe un libro con ese ID.");
@@ -102,8 +102,30 @@ public class Menu {
                 case 5 -> {
                     System.out.println("ID del libro a eliminar: ");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionLibros.libroExists(ID)) //Si se ha encontrado un libro con ese ID,
-                        DAOLibro.deleteLibro(GestionLibros.getLibroIfExists(ID));
+                    if (GestionLibros.libroExists(ID)) { //Si se ha encontrado un libro con ese ID,
+                        DTOLibro libroAborrar = GestionLibros.getLibroIfExists(ID);
+                        DAOLibro.deleteLibro(libroAborrar); //Borrado de la BD
+                        GestionLibros.getListaLibros().remove(libroAborrar); //Borrado de la lista
+
+                        //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
+                        if (!GestionAutores.getListaAutores().isEmpty()) { //Si existen autores
+                            for (DTOAutor autor : GestionAutores.getListaAutores()) { //Recorro el array de objetos de autor
+                                if (GestionLibroAutor.libroAutorExists(autor.getId(), libroAborrar.getId())) //Compruebo si ese autor ha escrito ese libro a borrar
+                                    // Borro la relación libroAutor de la lista obteniendo el objeto libroAutor con el id del autor y del libro en cuestión:
+                                    GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(autor.getId(), libroAborrar.getId()));
+                                    //En la BD ya está borrado con el delete on cascade
+                            }
+                        }
+
+                        //Borrado de las listas de préstamo donde coincida ese libro:
+                        if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
+                            for (DTOPrestamo prestamo : GestionPrestamos.getListaPrestamos()) { //Recorro el array de objetos de prestamos
+                                if (prestamo.getLibroId().equals(libroAborrar.getId())) { //Compruebo si ese libro ha sido pedido en el préstamo
+                                    GestionPrestamos.getListaPrestamos().remove(prestamo);
+                                }
+                            } //En la BD se borrará con el DELETE ON CASCADE
+                        }
+                    }
                     else
                         System.out.println("No existe un libro con ese ID");
                 }
@@ -131,7 +153,9 @@ public class Menu {
                     //Pido los datos del autor por teclado y lo inserto en la BD y la lista (a la vez en el método)
                     System.out.println("Introduce el nombre del autor:");
                     String Nombre = t.nextLine();
-                    DAOAutor.insertAutor(new DTOAutor(Nombre));
+                    DTOAutor autor = new DTOAutor(Nombre);
+                    DAOAutor.insertAutor(autor);//Añadido a la BD
+                    GestionAutores.getListaAutores().add(autor);//Añadido a la lista
                 }
                 case 2 -> {
                     List<DTOAutor> listaAutores = DAOAutor.readAllAutores();
@@ -167,8 +191,21 @@ public class Menu {
                 case 5 -> {
                     System.out.println("ID del autor a eliminar: ");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAutores.autorExists(ID))
-                        DAOAutor.deleteAutor(GestionAutores.getAutorIfExists(ID));
+                    if (GestionAutores.autorExists(ID)) {
+                        DTOAutor autorAborrar = GestionAutores.getAutorIfExists(ID);
+                        DAOAutor.deleteAutor(autorAborrar); //Borrado de la BD
+                        GestionAutores.getListaAutores().remove(autorAborrar); //Borrado de la lista
+
+                        //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
+                        if (!GestionLibros.getListaLibros().isEmpty()) { //Si existen libros
+                            for (DTOLibro libro : GestionLibros.getListaLibros()) { //Recorro el array de objetos de libro
+                                if (GestionLibroAutor.libroAutorExists(libro.getId(), autorAborrar.getId())) //Compruebo si ese libro ha sido escrito por el autor a borrar
+                                    //Borro la relación libroAutor de la lista obteniendo el objeto libroAutor con el id del libro y del autor en cuestión:
+                                    GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(libro.getId(), autorAborrar.getId()));
+                                    //En la BD está ya borrado con el delete on cascade.
+                            }
+                        }
+                    }
                     else
                         System.out.println("No existe ningún autor con ese ID");
                 }
@@ -196,7 +233,9 @@ public class Menu {
                 case 1 -> {
                     System.out.println("Introduce el nombre del usuario:");
                     String Nombre = t.nextLine();
-                    DAOUsuario.insertUsuario(new DTOUsuario(Nombre));
+                    DTOUsuario usuario = new DTOUsuario(Nombre);
+                    DAOUsuario.insertUsuario(usuario);//Añadido a la BD
+                    GestionUsuarios.getListaUsuarios().add(usuario);//Añadido a la lista
                 }
                 case 2 -> {
                     List<DTOUsuario> listaUsuarios = DAOUsuario.readAllUsuarios();
@@ -231,8 +270,19 @@ public class Menu {
                 case 5 -> {
                     System.out.println("ID del usuario a eliminar: ");
                     Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionUsuarios.usuarioExists(ID))
-                        DAOUsuario.deleteUsuario(GestionUsuarios.getUsuarioIfExists(ID));
+                    if (GestionUsuarios.usuarioExists(ID)) {
+                        DTOUsuario usuarioABorrar = GestionUsuarios.getUsuarioIfExists(ID);
+                        DAOUsuario.deleteUsuario(usuarioABorrar);//Borrado de la BD
+
+                        //Borrado de las listas de préstamo donde coincida ese usuario:
+                        if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
+                            for (DTOPrestamo prestamo : GestionPrestamos.getListaPrestamos()) { //Recorro el array de objetos de prestamos
+                                if (prestamo.getUsuarioId().equals(usuarioABorrar.getId())) { //Compruebo si el prestamo ha sido pedido por ese usuario
+                                    GestionPrestamos.getListaPrestamos().remove(prestamo);
+                                }
+                            } //En la BD se borrará con el DELETE ON CASCADE
+                        }
+                    }
                     else
                         System.out.println("No existe ningún usuario con ese ID");
                 }
@@ -249,23 +299,21 @@ public class Menu {
                     Elige una opción:
                     1. Registrar un préstamo
                     2. Leer todos los préstamos
-                    3. Leer un prestamo por ID????
+                    3. Leer un prestamo por ID
                     4. Modificar préstamo
                     5. Leer préstamos de un libro
                     6. Leer préstamos de un usuario
-                    7. Volver al menú anterior
+                    7. Borrar préstamo
+                    8. Volver al menú anterior
                     """);
-            opcion = t.nextInt();
-            t.nextLine();
+            opcion = t.nextInt(); t.nextLine();
             switch (opcion) {
                 case 1 -> {
                     System.out.println("Introduce el id del libro: ");
-                    Integer idLibro = t.nextInt();
-                    t.nextLine();
+                    Integer idLibro = t.nextInt(); t.nextLine();
                     if (GestionLibros.libroExists(idLibro)) { //Si el libro existe
                         System.out.println("Introduce el id del usuario: ");
-                        Integer idUsuario = t.nextInt();
-                        t.nextLine();
+                        Integer idUsuario = t.nextInt(); t.nextLine();
                         if (GestionUsuarios.usuarioExists(idUsuario)) {
                             System.out.println("Introduce la fecha de inicio (YYYY-MM-DD): ");
                             String fechaInicioS = t.nextLine();
@@ -274,7 +322,8 @@ public class Menu {
                             String fechaFinS = t.nextLine();
                             LocalDate fechaFin = LocalDate.parse(fechaFinS);
                             DTOPrestamo nuevoPrestamo = new DTOPrestamo(fechaInicio, fechaFin, idLibro, idUsuario);
-                            DAOPrestamo.insertPrestamo(nuevoPrestamo);
+                            DAOPrestamo.insertPrestamo(nuevoPrestamo); //Añadido a la BD
+                            GestionPrestamos.getListaPrestamos().add(nuevoPrestamo); //Añadido a la lista
                         } else
                             System.out.println("No existe un usuario con ese ID");
                     } else
@@ -301,17 +350,14 @@ public class Menu {
                 }
                 case 4 -> {
                     System.out.println("Escribe el id del préstamo: ");
-                    Integer ID = t.nextInt();
-                    t.nextLine();
+                    Integer ID = t.nextInt(); t.nextLine();
                     if (GestionPrestamos.prestamoExists(ID)) {
                         DTOPrestamo prestamoAupdatear = GestionPrestamos.getPrestamoIfExists(ID);
                         System.out.println("Introduce el id del libro (puede ser el mismo): ");
-                        Integer idLibro = t.nextInt();
-                        t.nextLine();
+                        Integer idLibro = t.nextInt(); t.nextLine();
                         if (GestionLibros.libroExists(idLibro)) { //Si el libro existe
                             System.out.println("Introduce el id del usuario (puede ser el mismo): ");
-                            Integer idUsuario = t.nextInt();
-                            t.nextLine();
+                            Integer idUsuario = t.nextInt(); t.nextLine();
                             if (GestionUsuarios.usuarioExists(idUsuario)) { //Si el usuario existe
                                 System.out.println("Introduce la fecha de inicio (YYYY-MM-DD): ");
                                 String fechaInicioS = t.nextLine();
@@ -359,10 +405,22 @@ public class Menu {
                     } else
                         System.out.println("No existe un usuario con ese ID");
                 }
-                case 7 -> System.out.println("Volviendo atrás.");
+                case 7 -> {
+                    System.out.println("ID del préstamo a eliminar: ");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionPrestamos.prestamoExists(ID)) {
+                        DTOPrestamo prestamoAborrar = GestionPrestamos.getPrestamoIfExists(ID);
+                        DAOPrestamo.deletePrestamo(prestamoAborrar.getId());//Borrado de la BD
+                        //Borrado de las listas de préstamo:
+                        GestionPrestamos.getListaPrestamos().remove(prestamoAborrar);
+                    }
+                    else
+                        System.out.println("No existe ningún préstamo con ese ID");
+                }
+                case 8 -> System.out.println("Volviendo atrás.");
                 default -> System.out.println("Opción errónea, inténtalo de nuevo");
             }
-        } while (opcion != 7);
+        } while (opcion != 8);
     }
     public void menuLibroAutor() throws SQLException {
         int opcion = 0;
@@ -370,76 +428,158 @@ public class Menu {
             System.out.println("""
                     Elige una opción:
                     1. Registrar el autor de un libro
-                    2. Leer todos los libros con autores
+                    2. Leer todos las relaciones libro-autor
                     3. Leer autores de un libro
                     4. Leer libros de un autor
                     5. Modificar el autor de un libro
                     6. Borrar los libros de un autor
                     7. Borrar los autores de un libro
-                    6. Volver al menú anterior
+                    8. Borrar relación entre un libro y autor
+                    9. Volver al menú anterior
                     """);
             opcion = t.nextInt(); t.nextLine();
             switch (opcion){
                 case 1 -> {
-                    System.out.println("Introduce el id del alumno");
-                    Integer idAlumno = t.nextInt(); t.nextLine();
-                    Integer idAsignatura;
-                    if (GestionAlumnos.alumnoExists(idAlumno)) { //Si el alumno existe
-                        System.out.println("Introduce el id de la asignatura: ");
-                        idAsignatura = t.nextInt(); t.nextLine();
-                        if(GestionAsignaturas.asignaturaExists(idAsignatura))  //Si la asignatura existe
-                            if(!GestionMatriculas.matriculaExists(idAlumno, idAsignatura)) //Si esa matrícula no existe ya
-                                DAOMatricula.insertarMatricula(idAlumno, idAsignatura); //Inserto una nueva matrícula con el id de alumno y asignatura
-                            else
-                                System.out.println("El alumno ya está matriculado en esa asginatura.");
-                        else
-                            System.out.println("No existe una asignatura con ese ID");
-                    }
-                    else
-                        System.out.println("No existe un alumno con ese ID");
+                    System.out.println("Escribe el id del libro: ");
+                    Integer idLibro = t.nextInt(); t.nextLine();
+                    if (GestionLibros.libroExists(idLibro)) {
+                        System.out.println("Escribe el id del autor: ");
+                        Integer idAutor = t.nextInt(); t.nextLine();
+                        if (GestionAutores.autorExists(idAutor)){
+                            DTOLibro_Autor libroAutor = new DTOLibro_Autor(idLibro, idAutor);
+                            DAOLibro_Autor.insertLibroAutor(libroAutor.getIdLibro(), libroAutor.getIdAutor()); //Añadido a la BD
+                            GestionLibroAutor.getListaLibroAutor().add(libroAutor); //Añadido a la lista
+                        }
+                        else System.out.println("No existe un autor con ese ID.");
+                    } else
+                        System.out.println("No existe un libro con ese ID");
                 }
                 case 2 -> {
-                    List<DTOMatricula> listaMatriculas = DAOMatricula.readAll();
-                    if(!listaMatriculas.isEmpty()) {
-                        for (DTOMatricula matricula : listaMatriculas) {
-                            System.out.println(matricula);
+                    List<DTOLibro_Autor> listaRelaciones = DAOLibro_Autor.readAll();
+                    if(!listaRelaciones.isEmpty()) {
+                        for (DTOLibro_Autor libroAutor : listaRelaciones) {
+                            System.out.println(libroAutor);
                         }
                     }
-                    else System.out.println("No existen matrículas en la BD.");
+                    else System.out.println("No existen relaciones entre libros y autores.");
                 }
                 case 3 ->{
-                    System.out.println("Escribe el id del alumno: ");
-                    Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAlumnos.alumnoExists(ID)){
-                        List<DTOAsignatura> listaAsignaturasAlumno = DAOMatricula.readAllAsignaturasAlumno(ID);
-                        if(!listaAsignaturasAlumno.isEmpty()) {
-                            for (DTOAsignatura asignatura : listaAsignaturasAlumno) {
-                                System.out.println(asignatura);
+                    System.out.println("Escribe el id del libro: ");
+                    Integer idLibro = t.nextInt(); t.nextLine();
+                    if (GestionLibros.libroExists(idLibro)) {
+                        List<DTOAutor> listaAutoresLibro = DAOLibro_Autor.readAllAutoresLibro(idLibro);
+                        if(!listaAutoresLibro.isEmpty()) {
+                            for (DTOAutor autor : listaAutoresLibro) {
+                                System.out.println(autor);
                             }
                         }
-                        else System.out.println("Ese alumno no está cursando ninguna asignatura.");
+                        else System.out.println("Ese libro no tiene autores registrados.");
                     }
                     else
-                        System.out.println("No existe un alumno con ese ID");
+                        System.out.println("No existe un libro con ese ID.");
                 }
                 case 4 -> {
-                    System.out.println("Escribe el id de la asignatura: ");
-                    Integer ID = t.nextInt(); t.nextLine();
-                    if (GestionAsignaturas.asignaturaExists(ID)){
-                        List<DTOAlumno> listaAlumnosAsig = DAOMatricula.readAllAlumnosAsignatura(ID);
-                        if(!listaAlumnosAsig.isEmpty()) {
-                            for (DTOAlumno alumno : listaAlumnosAsig) {
-                                System.out.println(alumno);
+                    System.out.println("Escribe el id del autor: ");
+                    Integer idAutor = t.nextInt(); t.nextLine();
+                    if (GestionAutores.autorExists(idAutor)) {
+                        List<DTOLibro> listaLibrosAutor = DAOLibro_Autor.readAllLibrosAutor(idAutor);
+                        if(!listaLibrosAutor.isEmpty()) {
+                            for (DTOLibro libro : listaLibrosAutor) {
+                                System.out.println(libro);
                             }
                         }
-                        else System.out.println("No hay alumnos cursando esa asignatura.");
+                        else System.out.println("Ese autor no tiene libros registrados.");
                     }
                     else
-                        System.out.println("No existe una asignatura con ese ID");
+                        System.out.println("No existe un autor con ese ID.");
                 }
-                case 5 -> System.out.println("Volviendo atrás.");
+                case 5 -> {
+                    System.out.println("Escribe el id del libro: ");
+                    Integer idLibro = t.nextInt(); t.nextLine();
+                    if (GestionLibros.libroExists(idLibro)) {
+                        System.out.println("Escribe el anterior autor de ese libro a cambiar: ");
+                        Integer idAutorAntiguo = t.nextInt();t.nextLine();
+                        if (GestionAutores.autorExists(idAutorAntiguo)) {
+                            if(GestionLibroAutor.libroAutorExists(idLibro, idAutorAntiguo)){
+                                //Obtengo la relación entre libroAutor
+                                DTOLibro_Autor libroAutorAupdatear = GestionLibroAutor.getLibroAutorIfExists(idLibro, idAutorAntiguo);
+                                System.out.println("Escribe el nuevo autor de ese libro: ");
+                                Integer idAutorNuevo = t.nextInt();t.nextLine();
+                                if (GestionAutores.autorExists(idAutorNuevo)) {
+                                    //Obtengo el alias de ese nuevoAutor
+                                    DTOAutor autorNuevo = GestionAutores.getAutorIfExists(idAutorNuevo);
+                                    //Paso al método la relación ya existente y el nuevo autor (en la BD)
+                                    DAOLibro_Autor.updateAutorLibro(libroAutorAupdatear, autorNuevo);
+                                    //Updatea el objeto libroAutor y le cambia el idAutor al nuevo (en la lista)
+                                    libroAutorAupdatear.setIdAutor(idAutorNuevo);
+                                } else
+                                    System.out.println("No existe un autor con ese ID.");
+                            } else
+                                System.out.println("No existe esa relación entre ese libro y autor.");
+                        } else
+                            System.out.println("No existe un autor con ese ID.");
+                    } else
+                        System.out.println("No existe un libro con ese ID.");
+                }
+                case 6 -> {
+                    System.out.println("Id del autor del que eliminar sus libros: ");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionAutores.autorExists(ID)) {
+                        DTOAutor autorAborrar = GestionAutores.getAutorIfExists(ID);
+                        DAOLibro_Autor.deleteLibrosAutor(autorAborrar.getId()); //Borramos los libros del autor de la BD
+                        //BORRADO EN LA LISTA LIBRO AUTOR:
+                        if (!GestionLibros.getListaLibros().isEmpty()) { //Si existen libros
+                            for (DTOLibro libro : GestionLibros.getListaLibros()) { //Recorro el array de objetos de libro
+                                if (GestionLibroAutor.libroAutorExists(libro.getId(), autorAborrar.getId())) //Compruebo si ese libro ha sido escrito por el autor a borrar
+                                    //Borro la relación libroAutor de la lista obteniendo el objeto libroAutor con el id del libro y del autor en cuestión:
+                                    GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(libro.getId(), autorAborrar.getId()));
+                            } //En la BD ya está borrado con el delete on cascade
+                        }
+                    }
+                    else
+                        System.out.println("No existe ningún autor con ese ID");
+                }
+                case 7 -> {
+                    System.out.println("Id del libro del que eliminar sus autores: ");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionLibros.libroExists(ID)) { //Si se ha encontrado un libro con ese ID,
+                        DTOLibro libroAborrar = GestionLibros.getLibroIfExists(ID);
+                        DAOLibro_Autor.deleteAutoresLibro(libroAborrar.getId()); //Borramos los autores del libro de la BD
+                        //BORRADO EN LA LISTA LIBRO AUTOR:
+                        if (!GestionAutores.getListaAutores().isEmpty()) { //Si existen autores
+                            for (DTOAutor autor : GestionAutores.getListaAutores()) { //Recorro el array de objetos de autor
+                                if (GestionLibroAutor.libroAutorExists(autor.getId(), libroAborrar.getId())) //Compruebo si ese autor ha escrito ese libro a borrar
+                                    // Borro la relación libroAutor de la lista obteniendo el objeto libroAutor con el id del autor y del libro en cuestión:
+                                    GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(autor.getId(), libroAborrar.getId()));
+                            } //En la BD ya está borrado con el delete on cascade
+                        }
+                    }
+                    else
+                        System.out.println("No existe un libro con ese ID");
+                }
+                case 8 -> {
+                    System.out.println("Escribe el id del libro: ");
+                    Integer idLibro = t.nextInt(); t.nextLine();
+                    if (GestionLibros.libroExists(idLibro)) {
+                        System.out.println("Escribe el id del autor: ");
+                        Integer idAutor = t.nextInt(); t.nextLine();
+                        if (GestionAutores.autorExists(idAutor)){
+                            if(GestionLibroAutor.libroAutorExists(idLibro, idAutor)){
+                                DTOLibro_Autor libroAutorAborrar = GestionLibroAutor.getLibroAutorIfExists(idLibro, idAutor);
+                                //Borrado de la BD:
+                                DAOLibro_Autor.deleteRelacion(libroAutorAborrar.getIdLibro(), libroAutorAborrar.getIdAutor());
+                                //Borrado de la lista:
+                                GestionLibroAutor.getListaLibroAutor().remove(libroAutorAborrar);
+                            } else
+                                System.out.println("No existe una relación entre ese libro y autor.");
+                        } else
+                            System.out.println("No existe un autor con ese ID.");
+                    } else
+                        System.out.println("No existe un libro con ese ID");
+                }
+                case 9 -> System.out.println("Volviendo atrás.");
                 default -> System.out.println("Opción errónea, inténtalo de nuevo");
             }
-        }while(opcion!=5);
+        }while(opcion!=9);
     }
 }
