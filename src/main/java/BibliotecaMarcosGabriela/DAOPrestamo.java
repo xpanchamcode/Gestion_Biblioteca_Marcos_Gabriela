@@ -20,7 +20,7 @@ public class DAOPrestamo {
 
     //Métodos
     public static DTOPrestamo getPrestamo(ResultSet rs) throws SQLException {
-        Integer idPrestamo = rs.getInt("idPrestamo");
+        Integer idPrestamo = rs.getInt("id");
         LocalDate fechaInicio = rs.getDate("fechaInicio").toLocalDate();
         LocalDate fechaFin = rs.getDate("fechaFin").toLocalDate();
         Integer usuarioId = rs.getInt("usuarioId");
