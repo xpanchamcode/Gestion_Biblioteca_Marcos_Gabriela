@@ -133,7 +133,7 @@ public class DAOLibro_Autor {
         }
     }
 
-    public static void insertMatricula(DTOLibro libro, DTOAutor autor) throws SQLException {
+    public static void insertLibroAutor(DTOLibro libro, DTOAutor autor) throws SQLException {
         DTOLibro_Autor libroAutor = new DTOLibro_Autor(libro.getId(), autor.getId());
 
         try (PreparedStatement pst = conexion.prepareStatement(AÑADIRLIBROAUTOR)) {

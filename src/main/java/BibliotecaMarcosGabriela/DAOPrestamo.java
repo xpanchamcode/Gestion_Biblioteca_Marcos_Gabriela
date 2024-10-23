@@ -14,7 +14,7 @@ public class DAOPrestamo {
     private static String READALLLIBROSUSUARIO = "SELECT idLibro FROM Prestamo WHERE idUsuario=?";
     private static String READPRESTAMO = "SELECT * FROM Prestamo WHERE id=?";
     private static String READULTIMOPRESTAMO ="SELECT * FROM Prestamo ORDER BY idPrestamo DESC LIMIT 1";
-    private static String INSERTPRESTAMO = "INSERT INTO Prestamo (fechaInicio, fechaFin, usuarioId, libroId) VALUES (?,?,?,?) WHERE id=?";
+    private static String INSERTPRESTAMO = "INSERT INTO Prestamo (fechaInicio, fechaFin, usuarioId, libroId) VALUES (?,?,?,?)";
     private static String UPDATEPRESTAMO ="UPDATE Prestamo SET idLibro=?, idUsuario=?, fechaInicio=?, fechaFin=? WHERE id=?";
     private static String DELETEPRESTAMO = "DELETE FROM Prestamo WHERE id=?";
 

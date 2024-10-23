@@ -104,8 +104,6 @@ public class Menu {
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionLibros.libroExists(ID)) { //Si se ha encontrado un libro con ese ID,
                         DTOLibro libroAborrar = GestionLibros.getLibroIfExists(ID);
-                        DAOLibro.deleteLibro(libroAborrar); //Borrado de la BD
-                        GestionLibros.getListaLibros().remove(libroAborrar); //Borrado de la lista
 
                         //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
                         if (!GestionAutores.getListaAutores().isEmpty()) { //Si existen autores
@@ -125,6 +123,9 @@ public class Menu {
                                 }
                             } //En la BD se borrará con el DELETE ON CASCADE
                         }
+
+                        DAOLibro.deleteLibro(libroAborrar); //Borrado de la BD
+                        GestionLibros.getListaLibros().remove(libroAborrar); //Borrado de la lista
                     }
                     else
                         System.out.println("No existe un libro con ese ID");
@@ -193,8 +194,6 @@ public class Menu {
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionAutores.autorExists(ID)) {
                         DTOAutor autorAborrar = GestionAutores.getAutorIfExists(ID);
-                        DAOAutor.deleteAutor(autorAborrar); //Borrado de la BD
-                        GestionAutores.getListaAutores().remove(autorAborrar); //Borrado de la lista
 
                         //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
                         if (!GestionLibros.getListaLibros().isEmpty()) { //Si existen libros
@@ -205,6 +204,9 @@ public class Menu {
                                     //En la BD está ya borrado con el delete on cascade.
                             }
                         }
+
+                        DAOAutor.deleteAutor(autorAborrar); //Borrado de la BD
+                        GestionAutores.getListaAutores().remove(autorAborrar); //Borrado de la lista
                     }
                     else
                         System.out.println("No existe ningún autor con ese ID");
@@ -272,7 +274,6 @@ public class Menu {
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionUsuarios.usuarioExists(ID)) {
                         DTOUsuario usuarioABorrar = GestionUsuarios.getUsuarioIfExists(ID);
-                        DAOUsuario.deleteUsuario(usuarioABorrar);//Borrado de la BD
 
                         //Borrado de las listas de préstamo donde coincida ese usuario:
                         if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
@@ -280,8 +281,10 @@ public class Menu {
                                 if (prestamo.getUsuarioId().equals(usuarioABorrar.getId())) { //Compruebo si el prestamo ha sido pedido por ese usuario
                                     GestionPrestamos.getListaPrestamos().remove(prestamo);
                                 }
-                            } //En la BD se borrará con el DELETE ON CASCADE
+                            } //En la BD se borrarán los préstamos con el DELETE ON CASCADE
                         }
+
+                        DAOUsuario.deleteUsuario(usuarioABorrar);//Borrado de la BD del usuario
                     }
                     else
                         System.out.println("No existe ningún usuario con ese ID");
@@ -410,9 +413,9 @@ public class Menu {
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionPrestamos.prestamoExists(ID)) {
                         DTOPrestamo prestamoAborrar = GestionPrestamos.getPrestamoIfExists(ID);
-                        DAOPrestamo.deletePrestamo(prestamoAborrar.getId());//Borrado de la BD
                         //Borrado de las listas de préstamo:
                         GestionPrestamos.getListaPrestamos().remove(prestamoAborrar);
+                        DAOPrestamo.deletePrestamo(prestamoAborrar.getId());//Borrado de la BD
                     }
                     else
                         System.out.println("No existe ningún préstamo con ese ID");
@@ -526,7 +529,7 @@ public class Menu {
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionAutores.autorExists(ID)) {
                         DTOAutor autorAborrar = GestionAutores.getAutorIfExists(ID);
-                        DAOLibro_Autor.deleteLibrosAutor(autorAborrar.getId()); //Borramos los libros del autor de la BD
+
                         //BORRADO EN LA LISTA LIBRO AUTOR:
                         if (!GestionLibros.getListaLibros().isEmpty()) { //Si existen libros
                             for (DTOLibro libro : GestionLibros.getListaLibros()) { //Recorro el array de objetos de libro
@@ -535,6 +538,8 @@ public class Menu {
                                     GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(libro.getId(), autorAborrar.getId()));
                             } //En la BD ya está borrado con el delete on cascade
                         }
+
+                        DAOLibro_Autor.deleteLibrosAutor(autorAborrar.getId()); //Borramos los libros del autor de la BD
                     }
                     else
                         System.out.println("No existe ningún autor con ese ID");
@@ -544,7 +549,7 @@ public class Menu {
                     Integer ID = t.nextInt(); t.nextLine();
                     if (GestionLibros.libroExists(ID)) { //Si se ha encontrado un libro con ese ID,
                         DTOLibro libroAborrar = GestionLibros.getLibroIfExists(ID);
-                        DAOLibro_Autor.deleteAutoresLibro(libroAborrar.getId()); //Borramos los autores del libro de la BD
+
                         //BORRADO EN LA LISTA LIBRO AUTOR:
                         if (!GestionAutores.getListaAutores().isEmpty()) { //Si existen autores
                             for (DTOAutor autor : GestionAutores.getListaAutores()) { //Recorro el array de objetos de autor
@@ -553,6 +558,8 @@ public class Menu {
                                     GestionLibroAutor.getListaLibroAutor().remove(GestionLibroAutor.getLibroAutorIfExists(autor.getId(), libroAborrar.getId()));
                             } //En la BD ya está borrado con el delete on cascade
                         }
+
+                        DAOLibro_Autor.deleteAutoresLibro(libroAborrar.getId()); //Borramos los autores del libro de la BD
                     }
                     else
                         System.out.println("No existe un libro con ese ID");
@@ -566,10 +573,10 @@ public class Menu {
                         if (GestionAutores.autorExists(idAutor)){
                             if(GestionLibroAutor.libroAutorExists(idLibro, idAutor)){
                                 DTOLibro_Autor libroAutorAborrar = GestionLibroAutor.getLibroAutorIfExists(idLibro, idAutor);
-                                //Borrado de la BD:
-                                DAOLibro_Autor.deleteRelacion(libroAutorAborrar.getIdLibro(), libroAutorAborrar.getIdAutor());
                                 //Borrado de la lista:
                                 GestionLibroAutor.getListaLibroAutor().remove(libroAutorAborrar);
+                                //Borrado de la BD:
+                                DAOLibro_Autor.deleteRelacion(libroAutorAborrar.getIdLibro(), libroAutorAborrar.getIdAutor());
                             } else
                                 System.out.println("No existe una relación entre ese libro y autor.");
                         } else

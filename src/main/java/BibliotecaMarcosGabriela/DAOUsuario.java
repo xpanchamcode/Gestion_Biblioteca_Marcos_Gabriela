@@ -11,7 +11,7 @@ public class DAOUsuario {
     private static String READALLUSUARIOS = "SELECT * FROM Usuario";
     private static String READUSUARIO = "SELECT * FROM Usuario WHERE id=?";
     private static String READULTIMOUSUARIO ="SELECT * FROM Usuario ORDER BY idUsuario DESC LIMIT 1";
-    private static String INSERTUSUARIO = "INSERT INTO Usuario (nombre) VALUES (?) WHERE id=?";
+    private static String INSERTUSUARIO = "INSERT INTO Usuario (nombre) VALUES (?)";
     private static String UPDATEUSUARIO ="UPDATE Usuario SET nombre=? WHERE id=?";
     private static String DELETEUSUARIO = "DELETE FROM Usuario WHERE id=?";
 
@@ -64,7 +64,6 @@ public class DAOUsuario {
     public static void insertUsuario(DTOUsuario usuario) throws SQLException{
         try(PreparedStatement pst= conexion.prepareStatement(INSERTUSUARIO)){
             pst.setString(1,usuario.getNombre());
-            pst.setInt(2, usuario.getId());
             pst.executeUpdate();
         }
     }

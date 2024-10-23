@@ -11,7 +11,7 @@ public class DAOLibro {
     private static String READALLLIBROS = "SELECT * FROM Libro";
     private static String READLIBRO= "SELECT * FROM Libro WHERE id=?";
     private static String READULTIMOLIBRO ="SELECT * FROM Libro ORDER BY idLibro DESC LIMIT 1";
-    private static String INSERTLIBRO= "INSERT INTO Libro (titulo, isbn) VALUES (?,?) WHERE id=?";
+    private static String INSERTLIBRO= "INSERT INTO Libro (titulo, isbn) VALUES (?,?)";
     private static String UPDATELIBRO ="UPDATE Libro SET titulo=?, isbn=? WHERE id=?";
     private static String DELETELIBRO = "DELETE FROM Libro WHERE id=?";
 
@@ -66,7 +66,6 @@ public class DAOLibro {
         try(PreparedStatement pst= conexion.prepareStatement(INSERTLIBRO)){
             pst.setString(1, libro.getTitulo());
             pst.setString(2, libro.getIsbn());
-            pst.setInt(3, libro.getId());
             pst.executeUpdate();
         }
     }
