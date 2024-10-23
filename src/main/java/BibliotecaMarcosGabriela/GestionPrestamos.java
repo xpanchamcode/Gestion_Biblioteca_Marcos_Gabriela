@@ -19,11 +19,11 @@ public class GestionPrestamos {
     }
 
     //Método que comprueba si en la lista de objetos existe un objeto creado con ese id
-    public static boolean prestamoExists(Integer idLibro, Integer idUsuario){
+    public static boolean prestamoExists(Integer id){
         boolean existe = false;
         //Busco en la lista cuál es el objeto con ese ID:
         for (DTOPrestamo prestamo : listaPrestamos) {
-            if (prestamo.getLibroId().equals(idLibro) && prestamo.getUsuarioId().equals(idUsuario)) {
+            if (prestamo.getId().equals(id)) {
                 existe = true;
                 break;
             }

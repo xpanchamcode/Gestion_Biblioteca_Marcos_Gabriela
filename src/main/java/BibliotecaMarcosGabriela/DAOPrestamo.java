@@ -15,7 +15,7 @@ public class DAOPrestamo {
     private static String READPRESTAMO = "SELECT * FROM Prestamo WHERE id=?";
     private static String READULTIMOPRESTAMO ="SELECT * FROM Prestamo ORDER BY idPrestamo DESC LIMIT 1";
     private static String INSERTPRESTAMO = "INSERT INTO Prestamo (fechaInicio, fechaFin, usuarioId, libroId) VALUES (?,?,?,?) WHERE id=?";
-    private static String UPDATEPRESTAMO ="UPDATE Prestamo SET fechaInicio=?, fechaFin=? WHERE id=?";
+    private static String UPDATEPRESTAMO ="UPDATE Prestamo SET idLibro=?, idUsuario=?, fechaInicio=?, fechaFin=? WHERE id=?";
     private static String DELETEPRESTAMO = "DELETE FROM Prestamo WHERE id=?";
 
     //Métodos
@@ -85,9 +85,11 @@ public class DAOPrestamo {
     public static void updatePrestamo(DTOPrestamo prestamo) throws SQLException {
         try (PreparedStatement pst = conexion.prepareStatement(UPDATEPRESTAMO)) {
             // Convertir LocalDate a java.sql.Date para la actualización
-            pst.setDate(1, java.sql.Date.valueOf(prestamo.getFechaInicio()));
-            pst.setDate(2, java.sql.Date.valueOf(prestamo.getFechaFin()));
-            pst.setInt(3, prestamo.getId());
+            pst.setInt(1, prestamo.getLibroId());
+            pst.setInt(2, prestamo.getUsuarioId());
+            pst.setDate(3, java.sql.Date.valueOf(prestamo.getFechaInicio()));
+            pst.setDate(4, java.sql.Date.valueOf(prestamo.getFechaFin()));
+            pst.setInt(5, prestamo.getId());
             pst.executeUpdate();
         }
     }
@@ -102,13 +104,13 @@ public class DAOPrestamo {
         }
 
         //Para leer todos los usuarios que han cogido un libro en concreto
-        public static List<Integer> readAllUsuariosLibro(Integer libroId) throws SQLException {
-            List<Integer> usuarios = new ArrayList<>();
+        public static List<DTOUsuario> readAllUsuariosLibro(Integer libroId) throws SQLException {
+            List<DTOUsuario> usuarios = new ArrayList<>();
             try (PreparedStatement pst = conexion.prepareStatement(READALLUSUARIOSLIBRO)) {
                 pst.setInt(1, libroId);
                 try (ResultSet rs = pst.executeQuery()) {
-                    while (rs.next()) {
-                        usuarios.add(rs.getInt("idUsuario"));
+                    while (rs.next()) { //Mientras que haya líneas, recoge en la lista los objetos usuario ya creados con los ids de la BD
+                        usuarios.add(GestionUsuarios.getUsuarioIfExists(rs.getInt("idUsuario")));
                     }
                 }
             }
@@ -116,13 +118,13 @@ public class DAOPrestamo {
         }
 
         //Para leer todos los libros que ha cogido un usuario en concreto
-        public static List<Integer> readAllLibrosUsuario(Integer usuarioId) throws SQLException {
-            List<Integer> libros = new ArrayList<>();
+        public static List<DTOLibro> readAllLibrosUsuario(Integer usuarioId) throws SQLException {
+            List<DTOLibro> libros = new ArrayList<>();
             try (PreparedStatement pst = conexion.prepareStatement(READALLLIBROSUSUARIO)) {
                 pst.setInt(1, usuarioId);
                 try (ResultSet rs = pst.executeQuery()) {
                     while (rs.next()) {
-                        libros.add(rs.getInt("libroId"));
+                        libros.add(GestionLibros.getLibroIfExists(rs.getInt("libroId")));
                     }
                 }
             }
