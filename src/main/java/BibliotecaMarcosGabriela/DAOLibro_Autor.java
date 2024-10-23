@@ -48,7 +48,7 @@ public class DAOLibro_Autor {
 
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
-                    DTOLibro libro = GestionLibros.getLibroIfExists(rs.getInt("idAlumno"));
+                    DTOLibro libro = GestionLibros.getLibroIfExists(rs.getInt("idLibro"));
                     //En cada iteración devuelve el objeto libro ya existente en el programa en forma de alias mediante el id de la tabla
 
                     listaLibros.add(libro); //Guarda en una lista los libros
@@ -68,7 +68,7 @@ public class DAOLibro_Autor {
 
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
-                    DTOLibro libro = GestionLibros.getLibroIfExists(rs.getInt("idAlumno"));
+                    DTOLibro libro = GestionLibros.getLibroIfExists(rs.getInt("idLibro"));
                     //En cada iteración devuelve el objeto libro ya existente en el programa en forma de alias mediante el id de la tabla
 
                     listaLibros.add(libro); //Guarda en una lista los libros

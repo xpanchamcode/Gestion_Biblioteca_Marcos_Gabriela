@@ -105,6 +105,15 @@ public class Menu {
                     if (GestionLibros.libroExists(ID)) { //Si se ha encontrado un libro con ese ID,
                         DTOLibro libroAborrar = GestionLibros.getLibroIfExists(ID);
 
+//                        //Borrado de las listas de préstamo donde coincida ese libro:
+//                        if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
+//                            for (DTOPrestamo prestamo : GestionPrestamos.getListaPrestamos()) { //Recorro el array de objetos de prestamos
+//                                if (prestamo.getLibroId().equals(ID)) { //Compruebo si ese libro ha sido pedido en el préstamo
+//                                    GestionPrestamos.getListaPrestamos().remove(prestamo);
+//                                }
+//                            } //En la BD se borrará con el DELETE ON CASCADE
+//                        }
+
                         //BORRAR TAMBIÉN EN LA LISTA LIBRO AUTOR
                         if (!GestionAutores.getListaAutores().isEmpty()) { //Si existen autores
                             for (DTOAutor autor : GestionAutores.getListaAutores()) { //Recorro el array de objetos de autor
@@ -115,17 +124,8 @@ public class Menu {
                             }
                         }
 
-                        //Borrado de las listas de préstamo donde coincida ese libro:
-                        if (!GestionPrestamos.getListaPrestamos().isEmpty()) { //Si existen prestamos
-                            for (DTOPrestamo prestamo : GestionPrestamos.getListaPrestamos()) { //Recorro el array de objetos de prestamos
-                                if (prestamo.getLibroId().equals(libroAborrar.getId())) { //Compruebo si ese libro ha sido pedido en el préstamo
-                                    GestionPrestamos.getListaPrestamos().remove(prestamo);
-                                }
-                            } //En la BD se borrará con el DELETE ON CASCADE
-                        }
-
-                        DAOLibro.deleteLibro(libroAborrar); //Borrado de la BD
                         GestionLibros.getListaLibros().remove(libroAborrar); //Borrado de la lista
+                        DAOLibro.deleteLibro(libroAborrar); //Borrado de la BD
                     }
                     else
                         System.out.println("No existe un libro con ese ID");
@@ -205,8 +205,9 @@ public class Menu {
                             }
                         }
 
-                        DAOAutor.deleteAutor(autorAborrar); //Borrado de la BD
+
                         GestionAutores.getListaAutores().remove(autorAborrar); //Borrado de la lista
+                        DAOAutor.deleteAutor(autorAborrar); //Borrado de la BD
                     }
                     else
                         System.out.println("No existe ningún autor con ese ID");

@@ -10,12 +10,12 @@ public class DAOPrestamo {
 
     //Querys
     private static String READALLPRESTAMOS = "SELECT * FROM Prestamo";
-    private static String READALLUSUARIOSLIBRO = "SELECT idUsuario FROM Prestamo WHERE idLibro=?";
-    private static String READALLLIBROSUSUARIO = "SELECT idLibro FROM Prestamo WHERE idUsuario=?";
+    private static String READALLUSUARIOSLIBRO = "SELECT usuarioId FROM Prestamo WHERE libroId=?";
+    private static String READALLLIBROSUSUARIO = "SELECT libroId FROM Prestamo WHERE usuarioId=?";
     private static String READPRESTAMO = "SELECT * FROM Prestamo WHERE id=?";
-    private static String READULTIMOPRESTAMO ="SELECT * FROM Prestamo ORDER BY idPrestamo DESC LIMIT 1";
+    private static String READULTIMOPRESTAMO ="SELECT * FROM Prestamo ORDER BY id DESC LIMIT 1";
     private static String INSERTPRESTAMO = "INSERT INTO Prestamo (fechaInicio, fechaFin, usuarioId, libroId) VALUES (?,?,?,?)";
-    private static String UPDATEPRESTAMO ="UPDATE Prestamo SET idLibro=?, idUsuario=?, fechaInicio=?, fechaFin=? WHERE id=?";
+    private static String UPDATEPRESTAMO ="UPDATE Prestamo SET libroId=?, usuarioId=?, fechaInicio=?, fechaFin=? WHERE id=?";
     private static String DELETEPRESTAMO = "DELETE FROM Prestamo WHERE id=?";
 
     //Métodos
@@ -110,7 +110,7 @@ public class DAOPrestamo {
                 pst.setInt(1, libroId);
                 try (ResultSet rs = pst.executeQuery()) {
                     while (rs.next()) { //Mientras que haya líneas, recoge en la lista los objetos usuario ya creados con los ids de la BD
-                        usuarios.add(GestionUsuarios.getUsuarioIfExists(rs.getInt("idUsuario")));
+                        usuarios.add(GestionUsuarios.getUsuarioIfExists(rs.getInt("usuarioId")));
                     }
                 }
             }
