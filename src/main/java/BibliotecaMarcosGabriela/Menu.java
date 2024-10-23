@@ -2,6 +2,7 @@ package BibliotecaMarcosGabriela;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -241,45 +242,63 @@ public class Menu {
         }while(opcion!=6);
     }
 
-    public void menuMatricula() throws SQLException {
+    public void menuPrestamos() throws SQLException {
         int opcion = 0;
         do {
             System.out.println("""
                     Elige una opción:
-                    1. Matricular un alumno
-                    2. Leer todas las matrículas
-                    3. Leer asignaturas de un alumno
-                    4. Leer alumnos de una asignatura
-                    5. Volver al menú anterior
+                    1. Registrar un préstamo
+                    2. Leer todos los préstamos
+                    3. Leer un prestamo por ID????
+                    4. Leer asignaturas de un alumno
+                    5. Leer alumnos de una asignatura
+                    6. Volver al menú anterior
                     """);
             opcion = t.nextInt(); t.nextLine();
             switch (opcion){
                 case 1 -> {
-                    System.out.println("Introduce el id del alumno");
-                    Integer idAlumno = t.nextInt(); t.nextLine();
-                    Integer idAsignatura;
-                    if (GestionAlumnos.alumnoExists(idAlumno)) { //Si el alumno existe
-                        System.out.println("Introduce el id de la asignatura: ");
-                        idAsignatura = t.nextInt(); t.nextLine();
-                        if(GestionAsignaturas.asignaturaExists(idAsignatura))  //Si la asignatura existe
-                            if(!GestionMatriculas.matriculaExists(idAlumno, idAsignatura)) //Si esa matrícula no existe ya
-                                DAOMatricula.insertarMatricula(idAlumno, idAsignatura); //Inserto una nueva matrícula con el id de alumno y asignatura
-                            else
+                    System.out.println("Introduce el id del libro: ");
+                    Integer idLibro = t.nextInt(); t.nextLine();
+                    if (GestionLibros.libroExists(idLibro)) { //Si el libro existe
+                        System.out.println("Introduce el id del usuario: ");
+                        Integer idUsuario = t.nextInt(); t.nextLine();
+                        if(GestionUsuarios.usuarioExists(idUsuario)) {
+                            if (!GestionPrestamos.prestamoExists(idLibro, idUsuario)) { //Si esa matrícula no existe ya
+                                System.out.println("Introduce la fecha de inicio (YYYY-MM-DD): ");
+                                String fechaInicioS = t.nextLine();
+                                LocalDate fechaInicio = LocalDate.parse(fechaInicioS);
+                                System.out.println("Introduce la fecha de fin (YYYY-MM-DD): ");
+                                String fechaFinS = t.nextLine();
+                                LocalDate fechaFin = LocalDate.parse(fechaFinS);
+                                DTOPrestamo nuevoPrestamo = new DTOPrestamo(fechaInicio, fechaFin, idLibro, idUsuario);
+                                DAOPrestamo.insertPrestamo(nuevoPrestamo);
+                            } else
                                 System.out.println("El alumno ya está matriculado en esa asginatura.");
+                        }
                         else
-                            System.out.println("No existe una asignatura con ese ID");
+                            System.out.println("No existe un usuario con ese ID");
                     }
                     else
-                        System.out.println("No existe un alumno con ese ID");
+                        System.out.println("No existe un libro con ese ID");
                 }
+                //Leer todos los préstamos
                 case 2 -> {
-                    List<DTOMatricula> listaMatriculas = DAOMatricula.readAll();
-                    if(!listaMatriculas.isEmpty()) {
-                        for (DTOMatricula matricula : listaMatriculas) {
-                            System.out.println(matricula);
+                    List<DTOPrestamo> listaPrestamos = DAOPrestamo.readAllPrestamos();
+                    if(!listaPrestamos.isEmpty()) {
+                        for (DTOPrestamo prestamo : listaPrestamos) {
+                            System.out.println(prestamo);
                         }
                     }
-                    else System.out.println("No existen matrículas en la BD.");
+                    else System.out.println("No existen préstamos en la BD.");
+                }
+                //Leer un préstamo por ID
+                case 3 -> {
+                    System.out.println("ID del préstamo a leer: ");
+                    Integer ID = t.nextInt(); t.nextLine();
+                    if (GestionPrestamos.getPrestamoIfExists(ID))
+                        System.out.println(DAOUsuario.readUsuarioId(ID));
+                    else
+                        System.out.println("No existe ningún usuario con ese ID.");
                 }
                 case 3 ->{
                     System.out.println("Escribe el id del alumno: ");
