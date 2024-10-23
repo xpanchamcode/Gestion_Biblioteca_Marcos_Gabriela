@@ -24,6 +24,7 @@ public class DTOPrestamo {
                 contadorId = 0;
             }
         }
+        this.id=++contadorId;
         this.fechaInicio=fechaInicio;
         this.fechaFin=fechaFin;
         this.libroId= libroId;
@@ -31,7 +32,8 @@ public class DTOPrestamo {
     }
 
     public DTOPrestamo(Integer id, LocalDate fechaInicio, LocalDate fechaFin, Integer libroId, Integer usuarioId) {
-        this.id=++contadorId;
+        this.id=id;
+        contadorId = id;
         this.fechaInicio=fechaInicio;
         this.fechaFin=fechaFin;
         this.libroId= libroId;

@@ -21,6 +21,7 @@ public class DTOLibro {
                 contadorId = 0;
             }
         }
+        this.id=++contadorId;
         this.titulo = titulo;
         this.isbn=isbn;
     }
